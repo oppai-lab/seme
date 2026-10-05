@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+
+# Environments and local configuration
+.venv/
+.direnv/
+.env
+!.env.example
+
+# Tool caches and reports
+.coverage
+coverage.xml
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.ty_cache/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+.claude/settings.local.json

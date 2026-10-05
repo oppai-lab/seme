@@ -1,0 +1,51 @@
+# Two tiers, so the gate stays usable as the project grows:
+#   pre-commit -> fast, file-scoped checks on what is being committed
+#   pre-push   -> the full `make check` gate, identical to what runs locally and in CI
+default_install_hook_types: [pre-commit, pre-push]
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        stages: [pre-commit]
+      - id: check-case-conflict
+      - id: check-merge-conflict
+      - id: check-shebang-scripts-are-executable
+        stages: [pre-commit]
+      - id: check-toml
+      - id: check-yaml
+      - id: detect-private-key
+      - id: end-of-file-fixer
+        stages: [pre-commit]
+      - id: mixed-line-ending
+        stages: [pre-commit]
+        args: [--fix=lf]
+      - id: trailing-whitespace
+        stages: [pre-commit]
+
+  # Ruff runs through uv so the pinned version in uv.lock is the only one in play.
+  - repo: local
+    hooks:
+      - id: ruff-check
+        name: ruff check
+        entry: uv run ruff check --fix --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: ruff-format
+        name: ruff format
+        entry: uv run ruff format --force-exclude
+        language: system
+        types_or: [python, pyi]
+        require_serial: true
+
+      - id: project-checks
+        name: full quality gate (make check)
+        entry: make check
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-push]
